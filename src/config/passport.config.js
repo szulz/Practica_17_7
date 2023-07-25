@@ -1,13 +1,12 @@
 const passport = require('passport')
 const local = require('passport-local')
 const { isValidPassword, createHash } = require("../utils/utils.js");
-const UserModel = require("../DAO/models/users.model.js");
-const userModel = new UserModel;
 const LocalStrategy = local.Strategy;
 const GitHubStrategy = require('passport-github2')
 const FacebookStrategy = require('passport-facebook')
 const GoogleStrategy = require('passport-google-oauth2');
 const CartManagerMongoose = require('../services/carts.service.js');
+const userModel = require('../DAO/models/users.model.js');
 const cartManagerMongoose = new CartManagerMongoose
 
 async function startPassport() {
@@ -26,19 +25,19 @@ async function startPassport() {
                     //no sé si hay diferencia entre usar primero el .email que el ._json
                     //de cualquier manera lo puedo resolver usando la expresion del clg comentado abajo
                     //console.log(profile.emails[0].value);
-                    let user = await UserModel.findOne({ email: profile._json.email });
+                    let user = await userModel.findOne({ email: profile._json.email });
                     if (!user) {
                         const newUser = {
                             email: profile._json.email,
                             first_name: profile.username || profile._json.login || 'unspecified',
                             last_name: profile.displayName || 'unspecified',
                             password: 'unspecified',
-                            age: 'unspecified'
+                            age: 0
                         };
                         let cart = await cartManagerMongoose.createCart();
                         let cartId = cart._id.toString()
                         newUser.cart = cartId
-                        let userCreated = await UserModel.create(newUser);
+                        let userCreated = await userModel.create(newUser);
                         console.log('user registered');
                         return done(null, userCreated);
                     } else {
@@ -67,19 +66,19 @@ async function startPassport() {
             async (req, accessToken, refreshToken, profile, done) => {
                 try {
                     console.log(profile);
-                    let user = await UserModel.findOne({ email: profile.email });
+                    let user = await userModel.findOne({ email: profile.email });
                     if (!user) {
                         const newUser = {
                             email: profile.email,
                             first_name: profile.given_name || 'unspecified',
                             last_name: profile.family_name || 'unspecified',
                             password: 'unspecified',
-                            age: 'unspecified'
+                            age: 0
                         };
                         let cart = await cartManagerMongoose.createCart();
                         let cartId = cart._id.toString()
                         newUser.cart = cartId
-                        let userCreated = await UserModel.create(newUser);
+                        let userCreated = await userModel.create(newUser);
                         console.log('user registered');
                         return done(null, userCreated);
                     } else {
@@ -107,19 +106,19 @@ async function startPassport() {
             async (accessTocken, _, profile, done) => {
                 try {
                     console.log(profile._json.first_name);
-                    let user = await UserModel.findOne({ email: profile._json.email });
+                    let user = await userModel.findOne({ email: profile._json.email });
                     if (!user) {
                         const newUser = {
                             email: profile._json.email,
                             first_name: profile._json.first_name || 'unspecified',
                             last_name: profile._json.last_name || 'unspecified',
                             password: 'unspecified',
-                            age: 'unspecified'
+                            age: 0
                         };
                         let cart = await cartManagerMongoose.createCart();
                         let cartId = cart._id.toString()
                         newUser.cart = cartId
-                        let userCreated = await UserModel.create(newUser);
+                        let userCreated = await userModel.create(newUser);
                         console.log('user registered');
                         return done(null, userCreated);
                     } else {
@@ -139,7 +138,7 @@ async function startPassport() {
         'login',
         new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
             try {
-                const user = await UserModel.findOne({ email: username });
+                const user = await userModel.findOne({ email: username });
                 if (!user) {
                     console.log('no user');
                     return done(null, false)
@@ -164,7 +163,7 @@ async function startPassport() {
             async (req, username, password, done) => {
                 try {
                     const newUser = req.body;
-                    let existingUser = await UserModel.findOne({ email: username })
+                    let existingUser = await userModel.findOne({ email: username })
                     if (existingUser) {
                         console.log('user already exist');
                         return done(null, false);
@@ -175,7 +174,7 @@ async function startPassport() {
                     let cartId = cart._id.toString()
                     newUser.cart = cartId
                     newUser.password = createHash(newUser.password)
-                    let userCreated = await UserModel.create(newUser);
+                    let userCreated = await userModel.create(newUser);
                     console.log(userCreated);
                     return done(null, userCreated)
                 } catch (err) {
@@ -189,7 +188,7 @@ async function startPassport() {
         done(null, user._id);
     })
     passport.deserializeUser(async (id, done) => {
-        let user = await UserModel.findById(id);
+        let user = await userModel.findById(id);
         done(null, user);
     })
 }

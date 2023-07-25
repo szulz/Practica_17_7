@@ -7,25 +7,13 @@ const cartsRouter = express.Router();
 
 //LOCALHOST8080/CARTS/ ->>>>
 
+//busco el carro x id
 cartsRouter.get('/:cid', cartsController.userCart)
 
+//agrego prod al carro
 cartsRouter.post('/products/:pid', cartsController.addProduct);
 
-
-// elimino del carrito el prod seleccionado (tambien le agregue que si tiene cantidad > 1 decremente hasta eliminar el prod)
-cartsRouter.delete('/products/:pid', async (req, res) => {
-    try {
-        let response = await cartManagerMongoose.deleteProdById(req.params.cid, req.params.pid);
-        if (response) {
-            return res.status(200).send({ msg: 'The desired product quantity has been decreased by 1', data: response })
-        };
-        res.status(200).send({ data: 'the product has been removed from the cart successfully!' });
-    } catch (error) {
-        res.status(400).send({ msg: error.message });
-    }
-})
-
-
-
+//agregar boton para eliminar prod / decrementar la quantity
+cartsRouter.delete('/:cid/products/:pid', cartsController.deleteProduct)
 
 module.exports = cartsRouter

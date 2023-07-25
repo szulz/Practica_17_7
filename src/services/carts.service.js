@@ -2,29 +2,21 @@
 const { CartsModels } = require("../DAO/models/carts.model.js");
 const cartsModels = new CartsModels
 const { cartsModel } = require("../DAO/models/carts.model.js");
-const productModel = require("../DAO/models/product.model");
+const { productModel } = require("../DAO/models/product.model");
 
 class CartService {
+
+    async createCart() {
+        let newcart = await cartsModels.create()
+        return newcart
+    }
+
     async userCart(id) {
         let cartCountent = await cartsModels.findById(id)
         let products = cartCountent.cart.map((cart) => {
             return { title: cart.product.title, description: cart.product.description, price: cart.product.price, quantity: cart.quantity }
         })
         return products
-    }
-
-    async createCart() {
-        try {
-            let newcart = new cartsModel();
-            return newcart.save();
-        } catch (e) {
-            throw new Error(e.message)
-        }
-    }
-
-    async getAll() {
-        let allCarts = await cartsModel.find()
-        return allCarts
     }
 
     async addToCart(cartId, productId) {
@@ -36,35 +28,16 @@ class CartService {
         }
     }
 
-    async getById(id) {
-        //
-        let contenido = await cartsModels.findById(id)
-        return contenido;
-    }
 
-    async deleteProdById(cartId, productId) {
+    async deleteProduct(cartId, productId) {
         try {
-            let targetCart = await cartsModel.findById(cartId)
-            const targetProduct = targetCart.cart.find((item) => item.product == productId);
-            if (targetProduct.quantity > 1) {
-                targetProduct.quantity -= 1
-                return await targetCart.save();
-            }
-            await targetCart.cart.pull({ product: targetProduct.product })
-            await targetCart.save()
-            return
+            return await cartsModels.deleteById(cartId, productId)
         } catch (e) {
             throw new Error(e.message)
         }
     }
 
-    async deleteCartProducts(cartId) {
-        let cartToEmpty = await cartsModel.findById(cartId);
-        cartToEmpty.cart = []
-        await cartToEmpty.save()
-        return
-    }
-
+    /*
     async updateCart(cartId, newProducts, newQuantity) {
         if (!newQuantity) {
             newQuantity = 1
@@ -83,6 +56,7 @@ class CartService {
         }
         return await targetCart.save()
     }
+    */
 }
 
 

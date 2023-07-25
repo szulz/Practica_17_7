@@ -22,7 +22,10 @@ class AuthController {
     }
 
     async failure(req, res) {
-        return res.send(JSON.stringify('something went wrong'))
+        return res.status(400).send({
+            status: 'Something went wrong!',
+            msg: `Something went wrong! Try again later`,
+        });
     }
 
 }

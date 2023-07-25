@@ -10,14 +10,48 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.plugin(mongoosePaginate);
+
 const productModel = mongoose.model(productCollection, productSchema);
 
-class prodModel {
+
+class ProductModels {
+
     async getAll() {
         return productModel.find
     }
+
+    async createProduct(newProd) {
+        const createdProduct = new productModel({
+            title: newProd.title,
+            description: newProd.description,
+            price: newProd.price
+        });
+        return await createdProduct.save();
+    };
+
+    async updateProduct(id, newProperties) {
+        try {
+            const producto = await productModel.findByIdAndUpdate(id, {
+                title: newProperties.title,
+                description: newProperties.description,
+                price: newProperties.price
+            }, { new: true });
+            return producto;
+        } catch (e) {
+            throw new Error('something went wrong in UPDATEPRODUCT');
+        };
+    };
+
+    async deleteProduct(id) {
+        try {
+            return await productModel.deleteOne({ _id: id });
+        } catch (e) {
+            throw new Error('error en delete product');
+        }
+    }
 }
-// tengo que exportar la calse para usarla en el service***********
 
-
-module.exports = productModel
+module.exports = {
+    ProductModels: ProductModels,
+    productModel: productModel
+}

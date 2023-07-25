@@ -6,7 +6,7 @@ const productsRouter = require('./routes/product.router.js');
 const viewsRouter = require('./routes/views.router.js')
 const passport = require('passport')
 const startPassport = require('./config/passport.config.js');
-const sessionRouter = require('./routes/sessions.github.router.js');
+const sessionRouter = require('./routes/sessions.router.js');
 
 
 
