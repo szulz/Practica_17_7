@@ -1,10 +1,11 @@
 //  --------------MONGOOSE--------------
+const { MONGO_URL } = require("../config/env.config");
 const { connect } = require("mongoose")
 
 async function connectMongo() {
     try {
         await connect(
-            "mongodb+srv://ezeszulz:test@coder.phqbv0m.mongodb.net/E-commerce?retryWrites=true&w=majority"
+            MONGO_URL
         );
         console.log('plug to mongo');
     } catch (e) {
@@ -35,7 +36,7 @@ async function checkQuery(queryParams) {
 }
 
 //--------bcrypt------------
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 const isValidPassword = (password, hashPassword) => bcrypt.compareSync(password, hashPassword)
 

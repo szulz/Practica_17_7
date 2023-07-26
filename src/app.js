@@ -7,9 +7,8 @@ const viewsRouter = require('./routes/views.router.js')
 const passport = require('passport')
 const startPassport = require('./config/passport.config.js');
 const sessionRouter = require('./routes/sessions.router.js');
-
-
-
+const { MONGO_URL, PORT, ADMIN_EMAIL, ADMIN_PASSWORD, MODE } = require('./config/env.config.js');
+console.log(MODE);
 //--------login----------
 const cartsRouter = require('./routes/carts.router.js')
 const authRouter = require('./routes/auth.router.js');
@@ -20,7 +19,6 @@ const MongoStore = require('connect-mongo');
 const myModules = require('./utils/utils.js')
 const path = require('path');
 const app = express();
-const port = 8080;
 
 // --------CONNECT TO MONGO--------
 
@@ -38,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //*MONGOCOOKIES*
 app.use(session({
-  store: MongoStore.create({ mongoUrl: 'mongodb+srv://ezeszulz:test@coder.phqbv0m.mongodb.net/E-commerce?retryWrites=true&w=majority', ttl: 7200 }),
+  store: MongoStore.create({ mongoUrl: MONGO_URL, ttl: 7200 }),
   secret: 'SECRETO',
   resave: true,
   saveUninitialized: true
@@ -62,6 +60,6 @@ app.use('/products', viewsRouter);
 app.use('/carts', cartsRouter);
 app.use('/auth', authRouter)
 
-app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`Example app listening on port http://localhost:${PORT}`)
 });

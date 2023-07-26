@@ -1,3 +1,5 @@
+const { ADMIN_EMAIL, ADMIN_PASSWORD } = require("../config/env.config.js");
+
 
 class Auth {
     async connectionCheck(req, res, next) {
@@ -22,8 +24,20 @@ class Auth {
         }
         console.log('podes loguearte/registrarte');
         return next()
-
     }
+
+    async isAdmin(req, res, next) {
+        if (ADMIN_EMAIL == false) {
+            console.log('no sos admin');
+        } else {
+            console.log('sos adm')
+            return res.redirect('auth/login')
+            
+        }
+
+        return next()
+    }
+
 }
 
 

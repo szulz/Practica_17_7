@@ -7,7 +7,9 @@ const FacebookStrategy = require('passport-facebook')
 const GoogleStrategy = require('passport-google-oauth2');
 const CartManagerMongoose = require('../services/carts.service.js');
 const userModel = require('../DAO/models/users.model.js');
+const { GITHUB_ID, GOOGLE_ID, FACEBOOK_ID } = require('./env.config.js');
 const cartManagerMongoose = new CartManagerMongoose
+
 
 async function startPassport() {
 
@@ -15,7 +17,7 @@ async function startPassport() {
         'github',
         new GitHubStrategy(
             {
-                clientID: 'Iv1.5ac7e46194b1934b',
+                clientID: GITHUB_ID,
                 clientSecret: 'db2a529ef55ff5f08af0e95f0a2836c7f4ac5de6',
                 callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
             },
@@ -56,7 +58,7 @@ async function startPassport() {
         'google',
         new GoogleStrategy(
             {
-                clientID: '101029298405-gs5rfao2de9nn3rtp5nsr8j0tfu4ao7k.apps.googleusercontent.com',
+                clientID: GOOGLE_ID,
                 clientSecret: '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',
                 callbackURL: "http://localhost:8080/api/sessions/googlecallback",
                 scope: ['https://www.googleapis.com/auth/userinfo.profile', 'email', 'name', 'displayName'],
@@ -98,7 +100,7 @@ async function startPassport() {
         'facebook',
         new FacebookStrategy(
             {
-                clientID: '989842548845487',
+                clientID: FACEBOOK_ID,
                 clientSecret: 'fede9849c4b17736f98a021e7dd8c51d',
                 callbackURL: 'http://localhost:8080/api/sessions/facebookcallback',
                 profileFields: ['id', 'emails', 'name']

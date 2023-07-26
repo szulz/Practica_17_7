@@ -13,7 +13,7 @@ class AuthController {
     }
 
     async saveSession(req, res) {
-        authService.saveSession(req.session, req.user)
+        await authService.saveSession(req.session, req.user)
         return res.redirect('/products')
     }
 

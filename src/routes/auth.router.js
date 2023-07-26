@@ -6,6 +6,7 @@ const passport = require('passport');
 const AuthController = require('../controllers/auth.controller.js');
 const authController = new AuthController
 
+
 authRouter.get('/logOut', authController.logOut)
 
 authRouter.get('/login', auth.currentSession, authController.logInGet)
